@@ -2,6 +2,7 @@ template <class Entry>
 class stack
 {
   public: stack();   		// constructor
+	  ~stack();		// destructor
  	  bool push(Entry); 	// push item onto stack
 	  bool pop(Entry&); 	// pop from stack into item
 	  bool isempty();	// check if stack is empty
