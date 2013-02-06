@@ -97,5 +97,67 @@ bool set_bitmap<Entry>::remove(Entry E)
   return true;
 }
 
-   
+template <class Entry>
+int set_bitmap<Entry>::setsize()
+{
+  // code to count the number of bits set to 1 in the array
+  int sum = 0;
+  for (int i=0; i < elements; i++)
+  {
+    int tempbyte = bits[i];	// copy for destructive testing
+    for (int j=0; j<CHAR_BIT; j++)
+    {
+      if (tempbyte&1==1) sum++;	// test rightmost bit
+      tempbyte = tempbyte >> 1;	// then shift right
+    }
+  }
+  return sum;
+}
+
+template <class Entry>
+set_bitmap<Entry> operator + (set_bitmap<Entry> A, set_bitmap<Entry> B)
+{
+  // union - logial or
+  set_bitmap<Entry> result;
+
+  for (int i=0; i < A.elements; i++) result.bits[i] = A.bits[i] | B.bits[i];
+
+  return result;
+}   
 	
+template <class Entry>
+set_bitmap<Entry> operator * (set_bitmap<Entry> A, set_bitmap<Entry> B)
+{  
+  // intersection - logial and
+  set_bitmap<Entry> result;
+
+  for (int i=0; i < A.elements; i++) result.bits[i] = A.bits[i] & B.bits[i];
+
+  return result;
+}
+
+template <class Entry>
+set_bitmap<Entry> operator - (set_bitmap<Entry> A, set_bitmap<Entry> B)
+{  
+  // difference A minus B
+  set_bitmap<Entry> result;
+
+  for (int i=0; i < A.elements; i++) result.bits[i] = A.bits[i] & ~B.bits[i];
+  
+  return result;
+}
+
+template <class Entry>
+void set_bitmap<Entry>::show(ostream &s)
+{
+  // inside square brackets, indices of the 1 bits in ascending order are
+  // inserted into stream s
+  s << "[";
+  for (int i=0; i<elements; i++)
+     if (bits[i] != 0)
+       for (int j=0; j<CHAR_BIT; j++)
+          if ((bits[i] & (1<<((CHAR_BIT-1)-j))) != 0)
+            s << i*CHAR_BIT+j << " ";	// the index of a 1
+
+  s << "]\n";
+}
